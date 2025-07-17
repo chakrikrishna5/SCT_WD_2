@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CalcMaster - Stylish Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-light: #f0f0f0;
+      --bg-dark: #1e1e2f;
+      --btn-light: #dde5ec;
+      --btn-dark: #2e3a59;
+      --text-light: #2f4858;
+      --text-dark: #f5f5f5;
+      --accent: #ffcb77;
+      --accent-hover: #ffb347;
+      --equal-bg: #00b894;
+      --equal-hover: #00a383;
+      --clear-bg: #ef476f;
+      --clear-hover: #d42b57;
+    }
+
+    body {
+      background: var(--bg-light);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode {
+      background: var(--bg-dark);
+    }
+
+    .calculator {
+      background: #fff;
+      padding: 35px 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      width: 360px;
+      max-width: 100%;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode .calculator {
+      background: #2e3a59;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+
+    body.dark-mode .title {
+      color: var(--text-dark);
+    }
+
+    .display {
+      background: #f1f1f1;
+      color: #222;
+      font-size: 2.2rem;
+      text-align: right;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      overflow-x: auto;
+    }
+
+    body.dark-mode .display {
+      background: #3a4a6a;
+      color: #f5f5f5;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      background: var(--btn-light);
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    body.dark-mode button {
+      background: var(--btn-dark);
+      color: var(--text-dark);
+    }
+
+    button:hover {
+      background: #c7d2db;
+    }
+
+    body.dark-mode button:hover {
+      background: #435577;
+    }
+
+    button.operator {
+      background: var(--accent);
+      color: #1f2937;
+    }
+
+    button.operator:hover {
+      background: var(--accent-hover);
+    }
+
+    button.equal {
+      background: var(--equal-bg);
+      color: white;
+      grid-column: span 2;
+    }
+
+    button.equal:hover {
+      background: var(--equal-hover);
+    }
+
+    button.clear {
+      background: var(--clear-bg);
+      color: white;
+    }
+
+    button.clear:hover {
+      background: var(--clear-hover);
+    }
+
+    button.delete {
+      background: #ffd166;
+    }
+
+    button.delete:hover {
+      background: #fcbf49;
+    }
+
+    .toggle-mode {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .toggle-mode button {
+      padding: 8px 16px;
+      background: #888;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="title">CalcMaster</div>
+    <div id="display" class="display">0</div>
+    <div class="buttons">
+      <button class="clear">C</button>
+      <button class="delete">DEL</button>
+      <button class="operator">%</button>
+      <button class="operator">/</button>
+
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="operator">*</button>
+
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="operator">-</button>
+
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="operator">+</button>
+
+      <button>0</button>
+      <button>.</button>
+      <button class="equal">=</button>
+    </div>
+    <div class="toggle-mode">
+      <button id="modeToggle">🌙 Toggle Mode</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('button');
+    let input = '';
+
+    function updateDisplay(value) {
+      display.textContent = value;
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const value = button.textContent;
+
+        if (value === 'C') {
+          input = '';
+          updateDisplay('0');
+        } else if (value === 'DEL') {
+          input = input.slice(0, -1);
+          updateDisplay(input || '0');
+        } else if (value === '=') {
+          try {
+            const result = eval(input);
+            updateDisplay(result);
+            input = result.toString();
+          } catch {
+            updateDisplay('Error');
+            input = '';
+          }
+        } else if (value !== '🌙 Toggle Mode') {
+          input += value;
+          updateDisplay(input);
+        }
+      });
+    });
+
+    document.getElementById('modeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const validKeys = '0123456789+-*/.%';
+      if (validKeys.includes(e.key)) {
+        input += e.key;
+        updateDisplay(input);
+      } else if (e.key === 'Enter') {
+        try {
+          const result = eval(input);
+          updateDisplay(result);
+          input = result.toString();
+        } catch {
+          updateDisplay('Error');
+          input = '';
+        }
+      } else if (e.key === 'Backspace') {
+        input = input.slice(0, -1);
+        updateDisplay(input || '0');
+      } else if (e.key === 'Escape') {
+        input = '';
+        updateDisplay('0');
+      }
+    });
+  </script>
+</body>
+</html>
